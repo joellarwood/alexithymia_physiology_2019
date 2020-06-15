@@ -73,7 +73,7 @@ raw_shrink <- raw %>%
       "4" = "tender"
     )
   )
-)
+
 
 raw_spread <- raw_shrink %>% 
   tidyr::pivot_wider( # pivot wider so that each song has only one row with emotion rating as column
@@ -98,8 +98,8 @@ processed <- left_join(
 # Create function ---------------------------------------------------------
 
 psychopy_process <- function(x) {
-  # import and clean file
-  tmp_data <- read_csv(x) %>% # import file
+  # clean file
+  tmp_data <- x %>% 
     janitor::clean_names() %>% # make name snake case
     tidyr::drop_na( # drop practice trial
       song
@@ -178,6 +178,7 @@ test <- here::here(
   "individual_psychopy_data", 
   "001_MusicAffectPsychophysiology2019_2019_May_07_0907.csv"
 ) %>% 
+  read_csv() %>% 
   psychopy_process()
 
 identical(test, processed)
@@ -185,3 +186,36 @@ identical(test, processed)
 visdat::vis_dat(test)
 
 
+# Process and Merge -------------------------------------------------------
+
+## File directory 
+
+psychopy_files <- here::here(
+  "data",
+  "individual_psychopy_data"
+) %>% 
+  list.files()
+
+
+base_dir <- here::here(
+  "data",
+  "individual_psychopy_data"
+)
+
+psychopy_data <- data.frame()
+
+for (file in 1:length(psychopy_files)){
+  tmp_file <- psychopy_files[file] # select file
+  tmp_full_path <- paste0(base_dir, "/", tmp_file) # create file path
+  tmp_csv <- read_csv(tmp_full_path)
+  tmp_processed <- psychopy_process(tmp_csv) #process file
+  psychopy_data <- rbind(psychopy_data, tmp_processed) #add to long dataset
+}
+
+
+# wrtie file --------------------------------------------------------------
+
+write.csv(
+  psychopy_data, 
+  "data/psychopy_long.csv"
+)
