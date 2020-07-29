@@ -1,0 +1,3455 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Joel larwood" />
+
+<meta name="date" content="2020-07-23" />
+
+<title>Sample Descriptives</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">alexithymia_physiology_2019</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="describe.html">Descriptives</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Sample Descriptives</h1>
+<h4 class="author">Joel larwood</h4>
+<h4 class="date">2020-07-23</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-07-24
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>alexithymia_physiology_2019/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200723code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200723)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200723code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200723)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
+</p>
+</div>
+<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div class="panel-body">
+The following chunks had caches available:
+<ul>
+<li>
+loadData
+</li>
+<li>
+loadin
+</li>
+<li>
+personlevel
+</li>
+<li>
+session-info-chunk-inserted-by-workflowr
+</li>
+<li>
+songlevel
+</li>
+</ul>
+<p>To ensure reproducibility of the results, delete the cache directory <code>describe_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjoellarwoodalexithymiaphysiology2019treef1c0a7ec04cbd016f98e54eb86aa14a036c6de26targetblankf1c0a7ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/joellarwood/alexithymia_physiology_2019/tree/f1c0a7ec04cbd016f98e54eb86aa14a036c6de26" target="_blank">f1c0a7e</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjoellarwoodalexithymiaphysiology2019treef1c0a7ec04cbd016f98e54eb86aa14a036c6de26targetblankf1c0a7ea" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/joellarwood/alexithymia_physiology_2019/tree/f1c0a7ec04cbd016f98e54eb86aa14a036c6de26" target="_blank">f1c0a7e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .RData
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/describe_cache/
+
+Untracked files:
+    Untracked:  analysis/describe.rmd
+    Untracked:  data/grouped_self_report.csv
+    Untracked:  data/self_report_only.csv
+    Untracked:  data_cleaning/join_files.R
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Deleted:    code/README.md
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with <code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The data collected involve trait measures of personality, along with in the moment measures of musical responses.</p>
+<p>This page gives a high level overview of the data. Focusing on descriptive statistics and visualisations.</p>
+<pre><code>Rows: 10
+Columns: 72
+$ id                      &lt;dbl&gt; 55, 96, 44, 4, 9, 113, 60, 24, 75, 115
+$ tas                     &lt;dbl&gt; 37, 34, 60, 42, 66, 50, 55, 63, 48, 53
+$ depression              &lt;dbl&gt; 2, 0, 13, 8, 7, 2, 2, 4, 1, 5
+$ dif                     &lt;dbl&gt; 8, 10, 21, 15, 31, 18, 17, 28, 16, 18
+$ ddf                     &lt;dbl&gt; 13, 10, 18, 9, 20, 13, 18, 20, 12, 16
+$ eot                     &lt;dbl&gt; 16, 14, 21, 18, 15, 19, 20, 15, 20, 19
+$ tas_1                   &lt;dbl&gt; 1, 4, 2, 2, 5, 2, 2, 4, 2, 4
+$ tas_2                   &lt;dbl&gt; 2, 4, 4, 2, 4, 2, 2, 4, 2, 4
+$ tas_3                   &lt;dbl&gt; 1, 1, 2, 3, 4, 3, 1, 3, 1, 2
+$ tas_4                   &lt;dbl&gt; 4, 3, 5, 4, 1, 4, 4, 2, 3, 4
+$ tas_5                   &lt;dbl&gt; 4, 3, 5, 5, 4, 3, 5, 4, 4, 4
+$ tas_6                   &lt;dbl&gt; 2, 1, 4, 2, 5, 2, 4, 5, 4, 2
+$ tas_7                   &lt;dbl&gt; 1, 1, 3, 2, 4, 3, 3, 4, 2, 3
+$ tas_8                   &lt;dbl&gt; 3, 1, 2, 5, 3, 2, 2, 1, 2, 1
+$ tas_9                   &lt;dbl&gt; 1, 1, 3, 2, 5, 3, 3, 4, 3, 4
+$ tas_10                  &lt;dbl&gt; 5, 4, 4, 2, 5, 3, 4, 4, 4, 4
+$ tas_11                  &lt;dbl&gt; 3, 1, 4, 2, 5, 2, 4, 5, 3, 4
+$ tas_12                  &lt;dbl&gt; 2, 1, 4, 2, 4, 3, 5, 3, 2, 2
+$ tas_13                  &lt;dbl&gt; 1, 1, 4, 2, 5, 2, 2, 5, 2, 1
+$ tas_14                  &lt;dbl&gt; 1, 1, 3, 2, 3, 3, 2, 3, 2, 2
+$ tas_15                  &lt;dbl&gt; 3, 3, 3, 2, 1, 4, 4, 4, 4, 5
+$ tas_16                  &lt;dbl&gt; 1, 2, 4, 1, 2, 1, 4, 1, 5, 1
+$ tas_17                  &lt;dbl&gt; 4, 1, 5, 1, 2, 4, 5, 4, 2, 4
+$ tas_18                  &lt;dbl&gt; 3, 5, 4, 5, 4, 3, 5, 5, 5, 4
+$ tas_19                  &lt;dbl&gt; 4, 5, 3, 3, 4, 5, 2, 3, 4, 5
+$ tas_20                  &lt;dbl&gt; 1, 1, 4, 1, 2, 2, 2, 1, 2, 5
+$ tas_4r                  &lt;dbl&gt; 2, 3, 1, 2, 5, 2, 2, 4, 3, 2
+$ tas_5r                  &lt;dbl&gt; 2, 3, 1, 1, 2, 3, 1, 2, 2, 2
+$ tas_10r                 &lt;dbl&gt; 1, 2, 2, 4, 1, 3, 2, 2, 2, 2
+$ tas_18r                 &lt;dbl&gt; 3, 1, 2, 1, 2, 3, 1, 1, 1, 2
+$ tas_19r                 &lt;dbl&gt; 2, 1, 3, 3, 2, 1, 4, 3, 2, 1
+$ dass_3                  &lt;dbl&gt; 1, 0, 3, 1, 1, 0, 0, 0, 0, 0
+$ dass_5                  &lt;dbl&gt; 1, 0, 3, 3, 2, 1, 1, 3, 1, 0
+$ dass_10                 &lt;dbl&gt; 0, 0, 3, 2, 2, 0, 0, 0, 0, 2
+$ dass_13                 &lt;dbl&gt; 0, 0, 2, 1, 2, 0, 1, 0, 0, 1
+$ dass_16                 &lt;dbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 2
+$ dass_17                 &lt;dbl&gt; 0, 0, 2, 0, 0, 0, 0, 1, 0, 0
+$ dass_21                 &lt;dbl&gt; 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
+$ gender                  &lt;chr&gt; &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;male&quot;, &quot;female…
+$ age                     &lt;dbl&gt; 18, NA, 19, 21, 20, 22, 18, 20, 19, 17
+$ musichours              &lt;chr&gt; &quot;3 hours&quot;, &quot;4 hours&quot;, &quot;More than 5 hours&quot;, &quot;M…
+$ yearsplay               &lt;chr&gt; &quot;More than 5 years&quot;, &quot;4 years musical experie…
+$ X1_1                    &lt;dbl&gt; 1724, 3014, 1371, 102, 280, 3521, 1875, 733, …
+$ participant             &lt;chr&gt; &quot;055&quot;, &quot;096&quot;, &quot;044&quot;, &quot;004&quot;, &quot;009&quot;, &quot;113&quot;, &quot;06…
+$ song                    &lt;chr&gt; &quot;30MonoWAV/30MonoT1.wav&quot;, &quot;30MonoWAV/30MonoT1…
+$ valence_target          &lt;chr&gt; &quot;positive&quot;, &quot;positive&quot;, &quot;positive&quot;, &quot;negative…
+$ arousal_target          &lt;chr&gt; &quot;low&quot;, &quot;low&quot;, &quot;low&quot;, &quot;high&quot;, &quot;high&quot;, &quot;low&quot;, &quot;…
+$ affectcat               &lt;dbl&gt; 4, 4, 4, 2, 1, 3, 1, 3, 2, 3
+$ songmark                &lt;dbl&gt; 13, 13, 15, 4, 7, 12, 6, 10, 3, 12
+$ word                    &lt;chr&gt; &quot;EXCITED&quot;, &quot;ANGRY&quot;, &quot;HAPPY&quot;, &quot;ALERT&quot;, &quot;FRUSTR…
+$ songtrials_this_trial_n &lt;dbl&gt; 1, 11, 9, 5, 7, 8, 8, 2, 8, 10
+$ rep_number              &lt;dbl&gt; 1, 0, 0, 0, 1, 0, 0, 0, 1, 1
+$ trial_number            &lt;dbl&gt; 17, 11, 9, 5, 23, 8, 8, 2, 24, 26
+$ arousal_rating          &lt;dbl&gt; 1, 2, 3, 4, 5, 1, 2, 1, 1, 1
+$ valence_rating          &lt;dbl&gt; 2, 1, 4, 4, 4, 2, 3, 3, 1, 1
+$ liking                  &lt;dbl&gt; 3, 2, 4, NA, NA, 4, 3, 3, 1, 1
+$ emotion_rating          &lt;dbl&gt; 1, 1, 4, 5, 1, 3, 1, 1, 2, 1
+$ emotion_target          &lt;chr&gt; &quot;tender&quot;, &quot;tender&quot;, &quot;tender&quot;, &quot;fear&quot;, &quot;happy&quot;…
+$ anxious                 &lt;dbl&gt; 1, 1, 3, 4, 1, 3, 1, 2, 4, 2
+$ ashamed                 &lt;dbl&gt; 1, 1, 2, 2, 1, 2, 1, 1, 1, 1
+$ scared                  &lt;dbl&gt; 1, 1, 2, 2, 1, 1, 1, 1, 3, 1
+$ alert                   &lt;dbl&gt; 1, 1, 4, 5, 4, 3, 3, 2, 2, 1
+$ angry                   &lt;dbl&gt; 1, 1, 2, 1, 1, 2, 1, 1, 2, 3
+$ happy                   &lt;dbl&gt; 2, 2, 4, 2, 5, 1, 3, 1, 1, 1
+$ active                  &lt;dbl&gt; 1, 1, 3, 5, 4, 1, 3, 2, 1, 1
+$ sad                     &lt;dbl&gt; 1, 2, 4, 2, 1, 4, 1, 3, 1, 4
+$ guilty                  &lt;dbl&gt; 1, 1, 3, 1, 1, 2, 1, 2, 1, 3
+$ tender                  &lt;dbl&gt; 1, 4, 3, 1, 1, 2, 1, 2, 1, 1
+$ frustrated              &lt;dbl&gt; 1, 1, 2, 2, 1, 2, 1, 2, 2, 1
+$ excited                 &lt;dbl&gt; 1, 1, 4, 4, 4, 1, 2, 1, 1, 1
+$ na                      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+$ factor                  &lt;chr&gt; &quot;Positive/Low&quot;, &quot;Positive/Low&quot;, &quot;Positive/Low…</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+id
+</th>
+<th style="text-align:right;">
+tas
+</th>
+<th style="text-align:right;">
+depression
+</th>
+<th style="text-align:right;">
+dif
+</th>
+<th style="text-align:right;">
+ddf
+</th>
+<th style="text-align:right;">
+eot
+</th>
+<th style="text-align:right;">
+tas_1
+</th>
+<th style="text-align:right;">
+tas_2
+</th>
+<th style="text-align:right;">
+tas_3
+</th>
+<th style="text-align:right;">
+tas_4
+</th>
+<th style="text-align:right;">
+tas_5
+</th>
+<th style="text-align:right;">
+tas_6
+</th>
+<th style="text-align:right;">
+tas_7
+</th>
+<th style="text-align:right;">
+tas_8
+</th>
+<th style="text-align:right;">
+tas_9
+</th>
+<th style="text-align:right;">
+tas_10
+</th>
+<th style="text-align:right;">
+tas_11
+</th>
+<th style="text-align:right;">
+tas_12
+</th>
+<th style="text-align:right;">
+tas_13
+</th>
+<th style="text-align:right;">
+tas_14
+</th>
+<th style="text-align:right;">
+tas_15
+</th>
+<th style="text-align:right;">
+tas_16
+</th>
+<th style="text-align:right;">
+tas_17
+</th>
+<th style="text-align:right;">
+tas_18
+</th>
+<th style="text-align:right;">
+tas_19
+</th>
+<th style="text-align:right;">
+tas_20
+</th>
+<th style="text-align:right;">
+tas_4r
+</th>
+<th style="text-align:right;">
+tas_5r
+</th>
+<th style="text-align:right;">
+tas_10r
+</th>
+<th style="text-align:right;">
+tas_18r
+</th>
+<th style="text-align:right;">
+tas_19r
+</th>
+<th style="text-align:right;">
+dass_3
+</th>
+<th style="text-align:right;">
+dass_5
+</th>
+<th style="text-align:right;">
+dass_10
+</th>
+<th style="text-align:right;">
+dass_13
+</th>
+<th style="text-align:right;">
+dass_16
+</th>
+<th style="text-align:right;">
+dass_17
+</th>
+<th style="text-align:right;">
+dass_21
+</th>
+<th style="text-align:left;">
+gender
+</th>
+<th style="text-align:right;">
+age
+</th>
+<th style="text-align:left;">
+musichours
+</th>
+<th style="text-align:left;">
+yearsplay
+</th>
+<th style="text-align:right;">
+X1_1
+</th>
+<th style="text-align:left;">
+participant
+</th>
+<th style="text-align:left;">
+song
+</th>
+<th style="text-align:left;">
+valence_target
+</th>
+<th style="text-align:left;">
+arousal_target
+</th>
+<th style="text-align:right;">
+affectcat
+</th>
+<th style="text-align:right;">
+songmark
+</th>
+<th style="text-align:left;">
+word
+</th>
+<th style="text-align:right;">
+songtrials_this_trial_n
+</th>
+<th style="text-align:right;">
+rep_number
+</th>
+<th style="text-align:right;">
+trial_number
+</th>
+<th style="text-align:right;">
+arousal_rating
+</th>
+<th style="text-align:right;">
+valence_rating
+</th>
+<th style="text-align:right;">
+liking
+</th>
+<th style="text-align:right;">
+emotion_rating
+</th>
+<th style="text-align:left;">
+emotion_target
+</th>
+<th style="text-align:right;">
+anxious
+</th>
+<th style="text-align:right;">
+ashamed
+</th>
+<th style="text-align:right;">
+scared
+</th>
+<th style="text-align:right;">
+alert
+</th>
+<th style="text-align:right;">
+angry
+</th>
+<th style="text-align:right;">
+happy
+</th>
+<th style="text-align:right;">
+active
+</th>
+<th style="text-align:right;">
+sad
+</th>
+<th style="text-align:right;">
+guilty
+</th>
+<th style="text-align:right;">
+tender
+</th>
+<th style="text-align:right;">
+frustrated
+</th>
+<th style="text-align:right;">
+excited
+</th>
+<th style="text-align:left;">
+na
+</th>
+<th style="text-align:left;">
+factor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:left;">
+3 hours
+</td>
+<td style="text-align:left;">
+More than 5 years
+</td>
+<td style="text-align:right;">
+1724
+</td>
+<td style="text-align:left;">
+055
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoT1.wav
+</td>
+<td style="text-align:left;">
+positive
+</td>
+<td style="text-align:left;">
+low
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:left;">
+EXCITED
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+tender
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Positive/Low
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+96
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+4 hours
+</td>
+<td style="text-align:left;">
+4 years musical experience
+</td>
+<td style="text-align:right;">
+3014
+</td>
+<td style="text-align:left;">
+096
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoT1.wav
+</td>
+<td style="text-align:left;">
+positive
+</td>
+<td style="text-align:left;">
+low
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:left;">
+ANGRY
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+tender
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Positive/Low
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+44
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:left;">
+More than 5 hours
+</td>
+<td style="text-align:left;">
+4 years musical experience
+</td>
+<td style="text-align:right;">
+1371
+</td>
+<td style="text-align:left;">
+044
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoT3.wav
+</td>
+<td style="text-align:left;">
+positive
+</td>
+<td style="text-align:left;">
+low
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+HAPPY
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+tender
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Positive/Low
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:left;">
+More than 5 hours
+</td>
+<td style="text-align:left;">
+No musical experience
+</td>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:left;">
+004
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoF4.wav
+</td>
+<td style="text-align:left;">
+negative
+</td>
+<td style="text-align:left;">
+high
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+ALERT
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+fear
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Negative/High
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:left;">
+3 hours
+</td>
+<td style="text-align:left;">
+More than 5 years
+</td>
+<td style="text-align:right;">
+280
+</td>
+<td style="text-align:left;">
+009
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoH3.wav
+</td>
+<td style="text-align:left;">
+positive
+</td>
+<td style="text-align:left;">
+high
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+FRUSTRATED
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+happy
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Positive/High
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:left;">
+2 hours
+</td>
+<td style="text-align:left;">
+More than 5 years
+</td>
+<td style="text-align:right;">
+3521
+</td>
+<td style="text-align:left;">
+113
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoS4.wav
+</td>
+<td style="text-align:left;">
+negative
+</td>
+<td style="text-align:left;">
+low
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:left;">
+ANXIOUS
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+sad
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Negative/Low
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:left;">
+1 hour
+</td>
+<td style="text-align:left;">
+No musical experience
+</td>
+<td style="text-align:right;">
+1875
+</td>
+<td style="text-align:left;">
+060
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoH2.wav
+</td>
+<td style="text-align:left;">
+positive
+</td>
+<td style="text-align:left;">
+high
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+SCARED
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+happy
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Positive/High
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+63
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:left;">
+4 hours
+</td>
+<td style="text-align:left;">
+More than 5 years
+</td>
+<td style="text-align:right;">
+733
+</td>
+<td style="text-align:left;">
+024
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoS2.wav
+</td>
+<td style="text-align:left;">
+negative
+</td>
+<td style="text-align:left;">
+low
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:left;">
+EXCITED
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+sad
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Negative/Low
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+75
+</td>
+<td style="text-align:right;">
+48
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:left;">
+1 hour
+</td>
+<td style="text-align:left;">
+3 years musical experience
+</td>
+<td style="text-align:right;">
+2365
+</td>
+<td style="text-align:left;">
+075
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoF3.wav
+</td>
+<td style="text-align:left;">
+negative
+</td>
+<td style="text-align:left;">
+high
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+ANGRY
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+fear
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Negative/High
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:left;">
+3 hours
+</td>
+<td style="text-align:left;">
+1 year musical experience
+</td>
+<td style="text-align:right;">
+3603
+</td>
+<td style="text-align:left;">
+115
+</td>
+<td style="text-align:left;">
+30MonoWAV/30MonoS4.wav
+</td>
+<td style="text-align:left;">
+negative
+</td>
+<td style="text-align:left;">
+low
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:left;">
+ACTIVE
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+sad
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Negative/Low
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="person-level-descriptives" class="section level2">
+<h2>Person Level Descriptives</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="center">Overall (N=119)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Difficulty Describing Feelings</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left">   Mean (SD)</td>
+<td align="center">14.126 (4.258)</td>
+</tr>
+<tr class="odd">
+<td align="left">   Range</td>
+<td align="center">5.000 - 25.000</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Difficulty Identifying Feelings</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="left">   Mean (SD)</td>
+<td align="center">17.496 (5.328)</td>
+</tr>
+<tr class="even">
+<td align="left">   Range</td>
+<td align="center">8.000 - 34.000</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>External Oriented Thinking</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left">   Mean (SD)</td>
+<td align="center">18.689 (4.129)</td>
+</tr>
+<tr class="odd">
+<td align="left">   Range</td>
+<td align="center">9.000 - 29.000</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Total Alexithymia (TAS-20)</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="left">   Mean (SD)</td>
+<td align="center">50.311 (10.438)</td>
+</tr>
+<tr class="even">
+<td align="left">   Range</td>
+<td align="center">29.000 - 77.000</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Depressive Symptoms (DASS)</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left">   Mean (SD)</td>
+<td align="center">4.706 (3.969)</td>
+</tr>
+<tr class="odd">
+<td align="left">   Range</td>
+<td align="center">0.000 - 18.000</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Daily Music Listening (hrs)</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="left">   1 hour</td>
+<td align="center">18 (15.1%)</td>
+</tr>
+<tr class="even">
+<td align="left">   2 hours</td>
+<td align="center">35 (29.4%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   3 hours</td>
+<td align="center">19 (16.0%)</td>
+</tr>
+<tr class="even">
+<td align="left">   4 hours</td>
+<td align="center">19 (16.0%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   5 hours</td>
+<td align="center">7 (5.9%)</td>
+</tr>
+<tr class="even">
+<td align="left">   Less than 1 hour</td>
+<td align="center">1 (0.8%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   More than 5 hours</td>
+<td align="center">20 (16.8%)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Years Playing Music</strong></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="left">   1 year musical experience</td>
+<td align="center">11 (9.2%)</td>
+</tr>
+<tr class="even">
+<td align="left">   2 years musical experience</td>
+<td align="center">12 (10.1%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   3 years musical experience</td>
+<td align="center">9 (7.6%)</td>
+</tr>
+<tr class="even">
+<td align="left">   4 years musical experience</td>
+<td align="center">11 (9.2%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   5 years musical experience</td>
+<td align="center">3 (2.5%)</td>
+</tr>
+<tr class="even">
+<td align="left">   More than 5 years</td>
+<td align="center">50 (42.0%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   No musical experience</td>
+<td align="center">23 (19.3%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="song-level-descriptives-by-affect-category" class="section level2">
+<h2>Song Level Descriptives by affect category</h2>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="16%" />
+<col width="15%" />
+<col width="16%" />
+<col width="15%" />
+<col width="10%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="center">Negative/High (N=119)</th>
+<th align="center">Negative/Low (N=119)</th>
+<th align="center">Positive/High (N=119)</th>
+<th align="center">Positive/Low (N=119)</th>
+<th align="center">Total (N=476)</th>
+<th align="right">p value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Experienced Arousal</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="right">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td align="left">   Mean (SD)</td>
+<td align="center">2.997 (0.757)</td>
+<td align="center">1.546 (0.563)</td>
+<td align="center">3.574 (0.694)</td>
+<td align="center">2.251 (0.656)</td>
+<td align="center">2.592 (1.017)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">   Range</td>
+<td align="center">1.000 - 4.750</td>
+<td align="center">1.000 - 3.875</td>
+<td align="center">1.500 - 4.875</td>
+<td align="center">1.000 - 4.375</td>
+<td align="center">1.000 - 4.875</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Experienced Valence</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="right">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td align="left">   Mean (SD)</td>
+<td align="center">1.665 (0.607)</td>
+<td align="center">1.759 (0.645)</td>
+<td align="center">3.537 (0.655)</td>
+<td align="center">3.099 (0.759)</td>
+<td align="center">2.515 (1.056)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">   Range</td>
+<td align="center">1.000 - 3.750</td>
+<td align="center">1.000 - 3.750</td>
+<td align="center">1.250 - 4.625</td>
+<td align="center">1.125 - 4.750</td>
+<td align="center">1.000 - 4.750</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Subjective Liking</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="right">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td align="left">   N-Miss</td>
+<td align="center">10</td>
+<td align="center">10</td>
+<td align="center">10</td>
+<td align="center">10</td>
+<td align="center">40</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">   Mean (SD)</td>
+<td align="center">1.979 (0.806)</td>
+<td align="center">2.432 (0.828)</td>
+<td align="center">3.163 (0.738)</td>
+<td align="center">2.976 (0.763)</td>
+<td align="center">2.638 (0.910)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">   Range</td>
+<td align="center">1.000 - 4.571</td>
+<td align="center">1.000 - 4.750</td>
+<td align="center">1.375 - 4.800</td>
+<td align="center">1.250 - 5.000</td>
+<td align="center">1.000 - 5.000</td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table>
+<div id="visual-summary" class="section level3">
+<h3>Visual Summary</h3>
+<p><img src="figure/describe.rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre><code>R version 3.6.3 (2020-02-29)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Catalina 10.15.4
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] arsenal_3.4.0   forcats_0.5.0   stringr_1.4.0   dplyr_1.0.0    
+ [5] purrr_0.3.4     readr_1.3.1     tidyr_1.1.0     tibble_3.0.1   
+ [9] ggplot2_3.3.0   tidyverse_1.3.0
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.5        lubridate_1.7.9   here_0.1          lattice_0.20-38  
+ [5] assertthat_0.2.1  rprojroot_1.3-2   digest_0.6.25     utf8_1.1.4       
+ [9] R6_2.4.1          cellranger_1.1.0  backports_1.1.5   reprex_0.3.0     
+[13] evaluate_0.14     httr_1.4.1        highr_0.8         pillar_1.4.4     
+[17] rlang_0.4.6       readxl_1.3.1      rstudioapi_0.11   Matrix_1.2-18    
+[21] rmarkdown_2.1     labeling_0.3      splines_3.6.3     webshot_0.5.2    
+[25] munsell_0.5.0     broom_0.5.5       compiler_3.6.3    httpuv_1.5.2     
+[29] modelr_0.1.6      xfun_0.12         pkgconfig_2.0.3   htmltools_0.4.0  
+[33] tidyselect_1.1.0  workflowr_1.6.2   fansi_0.4.1       viridisLite_0.3.0
+[37] crayon_1.3.4      dbplyr_1.4.2      withr_2.1.2       later_1.0.0      
+[41] grid_3.6.3        nlme_3.1-144      jsonlite_1.7.0    gtable_0.3.0     
+[45] lifecycle_0.2.0   DBI_1.1.0         git2r_0.26.1      magrittr_1.5     
+[49] scales_1.1.0      cli_2.0.2         stringi_1.4.6     farver_2.0.3     
+[53] fs_1.3.2          promises_1.1.0    xml2_1.3.2        ellipsis_0.3.1   
+[57] generics_0.0.2    vctrs_0.3.1       kableExtra_1.1.0  tools_3.6.3      
+[61] glue_1.4.1        hms_0.5.3         survival_3.1-8    yaml_2.2.1       
+[65] colorspace_1.4-1  rvest_0.3.5       knitr_1.28        haven_2.2.0      </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

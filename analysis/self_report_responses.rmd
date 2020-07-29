@@ -1,0 +1,197 @@
+---
+title: "self_report_responses"
+author: "Joel larwood"
+date: "2020-07-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+library(tidyverse)
+library(lmerTest)
+library(afex)
+```
+
+
+It is expected that alexithymia will moderate the relationship between affective category and affect ratings. 
+
+To test this I will follow a model building approach, where music level variables are added, then depression, then alexithymia. This will be done for ratings of valence and arousal 
+
+
+```{r}
+self_report_analyse <- here::here(
+  "data",
+  "self_report_only.csv"
+) %>% 
+  read_csv() %>% 
+  select(id, 
+         tas,
+         depression,
+         affectcat, 
+         factor,
+         songmark, 
+         rep_number,
+         arousal_rating,
+         valence_rating,
+         liking) %>% 
+  mutate(factor = fct_relevel(
+    factor, 
+    "Positive/Low",
+    "Positive/High",
+    "Negative/Low",
+    "Negative/High"
+  )
+  )
+
+```
+
+# Valence ratings 
+
+
+```{r}
+
+v_mod_1 <- lmerTest::lmer(
+  formula = valence_rating ~ factor + tas + factor:tas + (1 + songmark|id),
+  data = drop_na(self_report_analyse, liking))
+
+v_mod_2 <- lmerTest::lmer(
+  formula = valence_rating ~ 
+    factor + 
+    liking + 
+    factor:liking + 
+    depression + 
+    factor:depression + 
+    tas + 
+    factor:tas +
+    (1 + songmark|id),
+  data = drop_na(self_report_analyse, liking))
+
+sjPlot::tab_model(
+  v_mod_1,
+  v_mod_2,
+  show.est = FALSE,
+  show.std = TRUE,
+  show.aic = TRUE
+)Im7ras9488alhalhoff
+
+```
+
+
+
+### Valence contrasts
+
+```{r}
+
+mean_sd_df <- self_report_analyse %>% 
+  drop_na(liking) %>% 
+  select(tas, depression, id) %>% 
+  distinct(id, .keep_all = TRUE) 
+
+mean_tas <- mean(mean_sd_df$tas)
+sd_tas <- sd(mean_sd_df$tas)
+
+mean_plus_tas <- mean_tas + sd_tas
+mean_minus_tas <- mean_tas - sd_tas
+
+mean_dep <- mean(mean_sd_df$depression)
+sd_dep <- sd(mean_sd_df$depression)
+
+mean_plus_dep <- mean_dep + sd_dep
+mean_minus_dep <- mean_dep - sd_dep
+
+
+v_mod_2_grid <- emmeans::ref_grid(
+  v_mod_2, 
+  at = list(
+    tas = c(mean_minus_tas, mean_tas, mean_plus_tas),
+    factor = levels(self_report_analyse$factor)
+  )
+)
+```
+
+```{r valenceSlopes}
+
+emmeans::emm_options(lmerTest.limit = 4000, ## allow DF's
+                     pbkrtest.limit = 4000)
+
+v_mod_2_slopes <- emmeans::emtrends(v_mod_2, 
+                  specs = "factor",
+                  var = "tas") # calculates trend of alexithymia at each level of factor
+
+v_mod_2_slopes %>% 
+  knitr::kable(format = 'html') %>% 
+    kableExtra::kable_styling()
+
+```
+
+
+```{r valnecePairwise}
+
+emmeans::contrast(
+  v_mod_2_slopes,
+  method = "pairwise",
+  interaction = TRUE
+) %>% 
+  knitr::kable(format = 'html',
+               digits = 4) %>% 
+  kableExtra::kable_styling()
+
+
+
+```
+
+
+```{r ValencePlot}
+v_plot <- emmeans::emmip(
+  v_mod_2_grid,
+  factor~tas, 
+               CIs = TRUE, 
+               xlab = "Alexithymia Scores", 
+               ylab = "Predicted Valence Rating")
+
+
+v_plot + 
+  ggplot2::theme(legend.title = element_blank()) +
+  ggplot2::scale_fill_viridis_c() +
+  ggplot2::ylim(c(1,5)) +
+  ggplot2::geom_hline(yintercept = 3, linetype = "dashed") +
+  theme_classic()
+
+
+```
+
+```{r}
+
+a_mod_1 <- lmerTest::lmer(
+  formula = arousal_rating ~ factor + + tas + tas:factor + (1|id) + (1|songmark) ,
+  data = drop_na(self_report_analyse, liking))
+
+a_mod_2 <- lmerTest::lmer(
+  formula = arousal_rating ~ 
+    factor + 
+    liking + 
+    factor:liking + 
+    depression + 
+    factor:depression + 
+    tas + 
+    factor:tas +
+    (1|id) + (1|songmark),
+  data = self_report_analyse)
+
+sjPlot::tab_model(
+  a_mod_1,
+  a_mod_2,
+  show.est = FALSE,
+  show.std = TRUE,
+  show.aic = TRUE
+)
+
+```
+
+
+
+
+

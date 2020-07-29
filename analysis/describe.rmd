@@ -1,0 +1,233 @@
+---
+title: "Sample Descriptives"
+author: "Joel larwood"
+date: "2020-07-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+The data collected involve trait measures of personality, along with in the moment measures of musical responses. 
+
+This page gives a high level overview of the data. Focusing on descriptive statistics and visualisations. 
+
+```{r setOpts, echo = FALSE}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  error = FALSE,
+  warning = FALSE
+)
+```
+
+```{r loadin}
+library(tidyverse)
+library(arsenal)
+```
+
+```{r loadData, include = FALSE}
+
+data_self_report <- here::here(
+  "data", 
+  "self_report_only.csv"
+) %>% 
+  read_csv()
+
+```
+
+```{R glimpseData}
+data_self_report %>% 
+  select(- X1) %>% 
+  sample_n(10) %>% 
+  glimpse() %>% 
+  kableExtra::kable(format = 'html') %>% 
+  kableExtra::kable_styling()
+```
+
+```{r loadin2, echo = FALSE}
+data_survey <- here::here(
+  "data",
+  "survey_responses.csv"
+) %>% 
+  read_csv()
+
+```
+
+## Person Level Variables
+
+### Descriptives
+
+We measured trait alexithymia, depression like symptoms, along with musical variables (hors spent listening to music per day and years of musical training).
+
+The table below we can see good range in alexithymia and depression symptom scores. The sample tended to engage with music for multiples hours per day and also tended to have musical training. 
+```{r personlevel, results ='asis'}
+
+labels(data_survey) <- c(ddf = "Difficulty Describing Feelings",
+                           dif = "Difficulty Identifying Feelings",
+                           eot = "External Oriented Thinking",
+                           tas = "Total Alexithymia (TAS-20)",
+                           depression = "Depressive Symptoms (DASS)",
+                           musichours = "Daily Music Listening (hrs)",
+                           yearsplay = "Years Playing Music")
+arsenal::tableby(
+  ~ddf + dif + eot + tas + depression + musichours + yearsplay,
+  data = data_survey
+) %>% 
+  summary()
+
+```
+
+### Correlations 
+
+The person level measures were intercorrelated as would be expected. 
+```{r correlations}
+
+apaTables::apa.cor.table(data = select(data_self_report,
+                                       tas, depression, dif, ddf, eot))
+```
+
+### Reliabilties 
+```{r alphas}
+
+tas_alpha <- psych::alpha(
+  select(data_self_report, 
+         contains("tas"), 
+         -tas, 
+         -tas_4, 
+         -tas_5,
+         -tas_10, 
+         -tas_18,
+         -tas_19)
+)
+
+dep_alpha <- psych::alpha(
+  select(data_self_report,
+         "dass_3", 
+         "dass_5", 
+         "dass_10", 
+         "dass_13", 
+         "dass_16", 
+         "dass_17", 
+         "dass_21")
+)
+
+```
+The TAS-20 showed good reliability, ($\alpha$) = `r round(tas_alpha$total$raw_alpha, 2)`, as did the depression subscale of the DASS-1, ($\alpha$) = `r round(dep_alpha$total$raw_alpha, 2)`
+
+## Song Level 
+
+### Grouped means
+
+As can be seen below there were differences between groups but all valence and arousal ratings feel on the expected side of neutral. 
+
+```{r songlevel, results = 'asis'}
+
+average_cats <- here::here(
+  "data",
+  "grouped_self_report.csv"
+) %>% 
+  read_csv
+
+labels(average_cats) <- c(factor = "Valence and Arousal Target",
+                          arousal_rating = "Experienced Arousal",
+                          valence_rating= "Experienced Valence",
+                          liking = "Subjective Liking")
+
+
+arsenal::tableby(
+  factor ~ arousal_rating + valence_rating + liking,
+  data = average_cats
+) %>% 
+  summary()
+
+```
+
+### Visual Summary 
+
+```{r}
+
+average_cats %>%
+  select(id, 
+         factor, 
+         arousal_rating, 
+         valence_rating, 
+         liking) %>%
+  pivot_longer(
+    cols = arousal_rating:liking, 
+    names_to = "Dimension",
+    values_to = "Rating"
+  ) %>% 
+  ggplot2::ggplot(
+    aes(
+      x = factor,
+      y = Rating,
+      color = factor
+    )
+  ) + 
+  geom_violin() +
+  geom_boxplot(width = .2, 
+               fill = "white") + 
+  facet_wrap(~Dimension, 
+             nrow = 2,
+             labeller = labeller(
+               Dimension = c(
+                 valence_rating = "Rated Valence",
+                 arousal_rating = "Rated Arousal",
+                 liking = "Liking Rating"
+               )
+             )
+  )+
+  coord_flip() + 
+  theme_classic() + 
+    theme(legend.position = "top")  
+
+```
+
+### Emotion ratings
+
+```{r}
+
+std.err <- function(.x){
+  sd(.x)/sqrt(n())
+
+  }
+data_self_report %>% 
+  select(id, 
+         factor, 
+         anxious:excited) %>% 
+  group_by(factor)%>% 
+  summarise(across(anxious:excited, list(mean = mean, se = std.err))) %>% 
+  pivot_longer(
+    -factor, 
+    names_to = c("emotion", ".value"),
+    names_sep = "_",
+  ) %>% 
+  mutate(target = if_else(factor == "Negative/High" & emotion == "scared", "Target", 
+                          if_else(
+                            factor == "Positive/High" & emotion == "happy", "Target", 
+                            if_else(factor == "Negative/Low" & emotion == "sad", "Target", 
+                                    if_else(factor == "Positive/Low" & emotion == "tender","Target",
+                                            "Not Target")
+                            )
+                          )
+  )
+  ) %>%   
+  ggplot(
+    aes(x = emotion, 
+        y = mean, 
+        fill = target)
+  ) + 
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = mean - se, 
+                    ymax = mean + se),
+                width = .5) +
+  facet_wrap(~factor) +
+  coord_flip(ylim = c(1,5)) +
+  scale_fill_manual(values = c("red", "deep skyblue")) + 
+  theme_classic() +
+  theme(legend.position = 'none')
+```
+
