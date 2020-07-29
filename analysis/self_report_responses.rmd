@@ -34,16 +34,24 @@ self_report_analyse <- here::here(
          factor,
          songmark, 
          rep_number,
+         trial_number,
          arousal_rating,
          valence_rating,
          liking) %>% 
-  mutate(factor = fct_relevel(
-    factor, 
-    "Positive/Low",
-    "Positive/High",
-    "Negative/Low",
-    "Negative/High"
-  )
+  mutate( # relevel factors
+    factor = fct_relevel(
+      factor, 
+      "Positive/Low",
+      "Positive/High",
+      "Negative/Low",
+      "Negative/High"
+    )
+  ) %>% 
+  mutate( # make response correct type
+    id = factor(id),
+    songmark = factor(songmark),
+    rep_number = factor(rep_number),
+    trial_number = factor(trial_number)
   )
 
 ```
@@ -82,6 +90,23 @@ sjPlot::tab_model(
 
 
 ### Valence contrasts
+
+```{r}
+maximal_valence <- afex::mixed(
+  formula = valence_rating ~ factor*depression + factor*liking + factor*tas + (factor|id) + (1|songmark),
+  data = self_report_analyse
+)
+  
+
+
+
+  lmer(
+  valence_rating ~ factor*depression + factor*liking + factor*tas + (factor|id) + (songmark|factor),
+  data = self_report_analyse,
+  contrasts = list(a = "contr.sum")
+)
+```
+
 
 ```{r}
 
