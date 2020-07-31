@@ -36,7 +36,6 @@ self_report_analyse <- here::here(
     "Negative/Low",
     "Negative/High"
   )
-  )
 
 ```
 
