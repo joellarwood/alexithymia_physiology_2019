@@ -1,0 +1,43 @@
+---
+title: "EmoDif"
+author: "joellarwood"
+date: "2020-01-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+```{r PackageLoad, echo = TRUE, results = FALSE, message = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(tidyverse)
+library(irr)
+library(naniar)
+library(psych)
+library(car)
+library(pwr)
+library(TOSTER)
+```
+
+# Emotion Differntiation Analysis 
+
+Emotions can be seen as exist in the ontext and distinct of each other. This means people may conflate differing emotions as the same emotion or alternatively be highly granular in their emotions such that they can easily distinguist between different emotions. 
+
+Alexithymia has been found to relate to worse differentiation of negative emotions and this may relate to a poor emotion word linguistic reference space
+
+```{r loaddata}
+
+icc_data <- here::here(
+    "data",
+    "icc_values.csv"
+  ) %>% 
+  read_csv()
+
+```
+
+When referring to emotion differntiation higher ICC values indicate better emotion differntiation. After calculating ICC we had `r nrow(drop_na(icc_data,neg_icc))` useable values for negative emotions and `r nrow(drop_na(icc_data,pos_icc))` useable values for positive emotions. The average score for negative emotion differntiation was `r round(mean(icc_data$neg_icc, na.rm = TRUE), 2)` with a SD of `r round(sd(icc_data$neg_icc, na.rm = TRUE), 2)`. For posiotive emotions the avarge score for emotion differntiation was `r round(mean(icc_data$pos_icc, na.rm = TRUE), 2)` with a SD of `r round(sd(icc_data$pos_icc, na.rm = TRUE), 2)`. 
+
+Negative emotion differntiation did not relate to alexithymia `r apa::cor_apa(cor.test(icc_data$tas, icc_data$neg_icc), format = "markdown")`, not did positive emotion differentiation `r apa::cor_apa(cor.test(icc_data$tas, icc_data$pos_icc), format = "markdown")`. The same was true for the relationship between Difficulty Describing Feelings and negative emotion differentation `r apa::cor_apa(cor.test(icc_data$ddf, icc_data$neg_icc), format = "markdown")` as well as positive emotions, r `r apa::cor_apa(cor.test(icc_data$ddf, icc_data$pos_icc), format = "markdown")`. Likewise no relationship was found between Difficulty Identifying Feelings and negative emotion differentiation `r apa::cor_apa(cor.test(icc_data$dif, icc_data$neg_icc), format = "markdown")` as well as positive emotions, r `r apa::cor_apa(cor.test(icc_data$dif, icc_data$pos_icc), format = "markdown")`. This was also true fo externally orinted thinking for negative emotions `r apa::cor_apa(cor.test(icc_data$eot, icc_data$neg_icc), format = "markdown")`. However, externally oriented thinking was related to descreased differntiation of positive emotions `r apa::cor_apa(cor.test(icc_data$eot, icc_data$pos_icc), format = "markdown")`. 
+
+
+
+
+

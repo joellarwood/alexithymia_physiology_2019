@@ -16,9 +16,11 @@ library(afex)
 ```
 
 
-It is expected that alexithymia will moderate the relationship between affective category and affect ratings. 
+It is expected that alexithymia will moderate the relationship between affective category and affect ratings. Specifically we predicted that people high in alexithymia would make more neutral judgements of valence and arousal when the target valence of the song was negative. 
 
-To test this I will follow a model building approach, where music level variables are added, then depression, then alexithymia. This will be done for ratings of valence and arousal 
+We pre-registered a hypothesis that included only affective category and alexithymia. We have additionally provided alternative models that allowed for depression and song liking to be entered as control variables. 
+
+First I will center the data. All continuous variables will be grand mean centered. 
 
 
 ```{r}
@@ -27,16 +29,6 @@ self_report_analyse <- here::here(
   "self_report_only.csv"
 ) %>% 
   read_csv() %>% 
-  select(id, 
-         tas,
-         depression,
-         affectcat, 
-         factor,
-         songmark, 
-         rep_number,
-         arousal_rating,
-         valence_rating,
-         liking) %>% 
   mutate(factor = fct_relevel(
     factor, 
     "Positive/Low",
@@ -48,142 +40,64 @@ self_report_analyse <- here::here(
 
 ```
 
-# Valence ratings 
 
-
-```{r}
-
-v_mod_1 <- lmerTest::lmer(
-  formula = valence_rating ~ factor + tas + factor:tas + (1 + songmark|id),
-  data = drop_na(self_report_analyse, liking))
-
-v_mod_2 <- lmerTest::lmer(
-  formula = valence_rating ~ 
-    factor + 
-    liking + 
-    factor:liking + 
-    depression + 
-    factor:depression + 
-    tas + 
-    factor:tas +
-    (1 + songmark|id),
-  data = drop_na(self_report_analyse, liking))
-
-sjPlot::tab_model(
-  v_mod_1,
-  v_mod_2,
-  show.est = FALSE,
-  show.std = TRUE,
-  show.aic = TRUE
-)Im7ras9488alhalhoff
-
-```
-
-
-
-### Valence contrasts
-
-```{r}
-
-mean_sd_df <- self_report_analyse %>% 
-  drop_na(liking) %>% 
-  select(tas, depression, id) %>% 
-  distinct(id, .keep_all = TRUE) 
-
-mean_tas <- mean(mean_sd_df$tas)
-sd_tas <- sd(mean_sd_df$tas)
-
-mean_plus_tas <- mean_tas + sd_tas
-mean_minus_tas <- mean_tas - sd_tas
-
-mean_dep <- mean(mean_sd_df$depression)
-sd_dep <- sd(mean_sd_df$depression)
-
-mean_plus_dep <- mean_dep + sd_dep
-mean_minus_dep <- mean_dep - sd_dep
-
-
-v_mod_2_grid <- emmeans::ref_grid(
-  v_mod_2, 
-  at = list(
-    tas = c(mean_minus_tas, mean_tas, mean_plus_tas),
-    factor = levels(self_report_analyse$factor)
+```{r echo=TRUE}
+self_report_analyse <- self_report_analyse %>% 
+  mutate(
+    tas_c = tas - mean(tas, na.rm = TRUE),
+    dep_c = depression -mean(depression, na.rm = TRUE),
+    liking_c = liking - mean(liking, na.rm = TRUE)
   )
-)
-```
 
-```{r valenceSlopes}
-
-emmeans::emm_options(lmerTest.limit = 4000, ## allow DF's
-                     pbkrtest.limit = 4000)
-
-v_mod_2_slopes <- emmeans::emtrends(v_mod_2, 
-                  specs = "factor",
-                  var = "tas") # calculates trend of alexithymia at each level of factor
-
-v_mod_2_slopes %>% 
-  knitr::kable(format = 'html') %>% 
-    kableExtra::kable_styling()
-
-```
-
-
-```{r valnecePairwise}
-
-emmeans::contrast(
-  v_mod_2_slopes,
-  method = "pairwise",
-  interaction = TRUE
-) %>% 
-  knitr::kable(format = 'html',
-               digits = 4) %>% 
-  kableExtra::kable_styling()
-
-
-
-```
-
-
-```{r ValencePlot}
-v_plot <- emmeans::emmip(
-  v_mod_2_grid,
-  factor~tas, 
-               CIs = TRUE, 
-               xlab = "Alexithymia Scores", 
-               ylab = "Predicted Valence Rating")
-
-
-v_plot + 
-  ggplot2::theme(legend.title = element_blank()) +
-  ggplot2::scale_fill_viridis_c() +
-  ggplot2::ylim(c(1,5)) +
-  ggplot2::geom_hline(yintercept = 3, linetype = "dashed") +
+self_report_analyse %>% 
+  select(id, 
+         contains("_c"),
+         -liking_c
+         ) %>% 
+  pivot_longer(
+    cols = -id, 
+    names_to = "measure",
+    values_to = "value"
+  ) %>% 
+  mutate(measure = factor(measure))%>% 
+  distinct(id, measure, value)%>% 
+  ggplot(aes(x = value,
+             fill = measure)) + 
+  geom_histogram(aes(y = ..density..)) + 
+  geom_density(alpha = .2) +
+  facet_wrap(~measure) + 
+  theme(legend.position = "none") +
   theme_classic()
 
-
 ```
 
+
+# Valence ratings 
+
+From the models below it can be seen that the best fitting model, which includes, alexithymia, was the model that included liking of the song. 
+
 ```{r}
+v_hyp_model <- lmerTest::lmer(
+  formula = valence_rating ~ factor*tas_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
 
-a_mod_1 <- lmerTest::lmer(
-  formula = arousal_rating ~ factor + + tas + tas:factor + (1|id) + (1|songmark) ,
-  data = drop_na(self_report_analyse, liking))
+v_like_control <- lmerTest::lmer(
+  formula = valence_rating ~ factor*tas_c + factor*liking_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
 
-a_mod_2 <- lmerTest::lmer(
-  formula = arousal_rating ~ 
-    factor + 
-    liking + 
-    factor:liking + 
-    depression + 
-    factor:depression + 
-    tas + 
-    factor:tas +
-    (1|id) + (1|songmark),
+v_dep_control <- lmerTest::lmer(
+  formula = valence_rating ~ factor*tas_c + factor*dep_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
+
+v_all_control <- lmerTest::lmer(
+  formula = valence_rating ~ factor*tas_c + factor*dep_c + factor*liking_c + (1 + factor|id) + (1 | songmark),
   data = self_report_analyse)
 
 sjPlot::tab_model(
-  a_mod_1,
-  a_mod_2,
+  v_hyp_model,
+  v_like_control,
+  v_dep_control,
+  v_all_control,
   show.est = FALSE,
   show.std = TRUE,
   show.aic = TRUE
@@ -191,7 +105,195 @@ sjPlot::tab_model(
 
 ```
 
+## Simple Slopes
+```{r}
+
+interactions::sim_slopes(
+  model = v_like_control, 
+  pred = tas_c,
+  modx = factor
+)
+
+interactions::interact_plot(
+  model = v_like_control, 
+  pred = tas_c,
+  modx = factor,
+  interval = TRUE
+) + 
+  ylim(1,5) +
+  theme_classic()
+```
+
+# Arousal Model
+
+From the models below it can be seen that the best fitting model, which includes, alexithymia, was the model that included liking of the song. 
+
+```{r}
+
+a_hyp_model <- lmerTest::lmer(
+  formula = arousal_rating ~ factor*tas_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
+
+a_like_control <- lmerTest::lmer(
+  formula = arousal_rating ~ factor*tas_c + factor*liking_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
+
+a_dep_control <- lmerTest::lmer(
+  formula = arousal_rating ~ factor*tas_c + factor*dep_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
+
+a_all_control <- lmerTest::lmer(
+  formula = arousal_rating ~ factor*tas_c + factor*dep_c + factor*liking_c + (1 + factor|id) + (1 | songmark),
+  data = self_report_analyse)
+
+sjPlot::tab_model(
+  a_hyp_model,
+  a_like_control,
+  a_dep_control,
+  a_all_control,
+  show.est = FALSE,
+  show.std = TRUE,
+  show.aic = TRUE
+)
+
+```
+
+## Simple Slopes
+
+The simple slopes additionally reveal that high alexithymia was related to lower arousal ratings when the arousal was high and the valence negative
+```{r}
+
+interactions::sim_slopes(
+  model = a_like_control, 
+  pred = tas_c,
+  modx = factor
+)
+
+interactions::interact_plot(
+  model = a_like_control, 
+  pred = tas_c,
+  modx = factor,
+  interval = TRUE
+) + 
+  ylim(1,5) +
+  theme_classic()
+```
+
+# Exploratory analysis of target emotion ratings 
+
+The orignal stimulus set found the 2D valence model to better fit the data than descrete emotion labels. However we also collected ratings of the target emotions of the songs. 
+
+Below I recode the affective category into target emotions with the following correspondence
+- Positive Valence / Low Arousal = Tender
+- Positive Valence / High Arousal = Happy
+- Negative Valence / Low Arousal = Sad 
+- Negative Valence / High Arousal = Fear 
 
 
+```{r}
+target_data <- self_report_analyse %>% 
+  mutate(
+    target_emotion = as.factor(
+      recode(
+        factor, 
+        "Positive/High" = "happy",
+        "Negative/High" = "fear",
+        "Negative/Low" = "sad",
+        "Positive/Low" = "tender")),
+    target_rating = if_else(
+      target_emotion == "fear", 
+      scared, 
+      if_else(
+        target_emotion == "sad", 
+        sad, 
+        if_else(
+          target_emotion == "tender", 
+          tender, 
+          happy)
+      )
+    )
+  ) 
 
+```
 
+The descriptives for each can be seen here 
+
+```{r}
+
+means <- target_data %>% 
+  group_by(target_emotion) %>% 
+  summarise(mean = mean(target_rating))
+
+target_data %>% 
+  ggplot(
+    aes(x = target_rating,
+        color = target_emotion,
+        fill = target_emotion)
+    ) +
+  geom_histogram(alpha = .5,
+                 bins = 5,
+                 binwidth = 1) + 
+  geom_vline(data = means, 
+             aes(xintercept = mean),
+             linetype = "dashed") + 
+  facet_wrap(~target_emotion) + 
+  theme(legend.position = 'none') + 
+  theme_classic() +
+  coord_flip()
+```
+
+## Predicting Target Emotion Rating with alexithymia 
+
+We can again see the best fitting model is the model that included liking along with alexithymia
+
+```{r}
+emotion_tas_model <- lmerTest::lmer(
+  formula = target_rating ~ target_emotion*tas_c + (1 + target_emotion|id) + (1 | songmark),
+  data = target_data)
+
+emotion_like_control <- lmerTest::lmer(
+  formula = target_rating ~ target_emotion*tas_c + target_emotion*liking_c + (1 + target_emotion|id) + (1 | songmark),
+  data = target_data)
+
+emotion_dep_control <- lmerTest::lmer(
+  formula = target_rating ~ target_emotion*tas_c + target_emotion*dep_c + (1 + target_emotion|id) + (1 | songmark),
+  data = target_data)
+
+emotion_all_control <- lmerTest::lmer(
+  formula = target_rating ~ target_emotion*tas_c + target_emotion*dep_c + target_emotion*liking_c + (1 + target_emotion|id) + (1 | songmark),
+  data = target_data)
+
+sjPlot::tab_model(
+  emotion_tas_model,
+  emotion_like_control,
+  emotion_dep_control,
+  emotion_all_control,
+  show.est = FALSE,
+  show.std = TRUE,
+  show.aic = TRUE
+)
+
+```
+
+## Simple Slopes
+
+The simple slopes additionally reveal that high alexithymia was related to lower arousal ratings when the arousal was high and the valence negative.
+
+From the slopes we can see that alexithymia only influenced that ratings of tender songs. 
+```{r}
+
+interactions::sim_slopes(
+  model = emotion_like_control, 
+  pred = tas_c,
+  modx = target_emotion
+)
+
+interactions::interact_plot(
+  model = emotion_like_control, 
+  pred = tas_c,
+  modx = target_emotion,
+  interval = TRUE
+) + 
+  ylim(1,5) +
+  theme_classic()
+```
