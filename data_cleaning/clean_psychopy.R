@@ -71,6 +71,13 @@ raw_shrink <- raw %>%
       "2" = "fear", 
       "3" = "sad",
       "4" = "tender"
+    ), 
+    affect_label = recode_factor(
+      affectcat, 
+      "1" = "Positive/High", 
+      "2" = "Negative/High", 
+      "3" = "Negative/Low",
+      "4" = "Positive/Low"
     )
   )
 
@@ -147,7 +154,17 @@ psychopy_process <- function(x) {
         "2" = "fear",
         "3" = "sad",
         "4" = "tender"
-      )
+      ),
+      affect_label = recode_factor(
+        affectcat, 
+        "1" = "Positive/High", 
+        "2" = "Negative/High", 
+        "3" = "Negative/Low",
+        "4" = "Positive/Low"),
+      # centre within cluster 
+      arousal_rating_c = scale(arousal_rating, scale = FALSE),
+      liking_c = scale(liking, scale = FALSE),
+      valence_rating_c = scale(valence_rating, scale = FALSE)
     )
 
   tmp_spread <- tmp_data %>%

@@ -13,6 +13,7 @@ editor_options:
 library(tidyverse)
 library(lmerTest)
 library(afex)
+library(emmeans)
 ```
 
 
@@ -20,7 +21,129 @@ It is expected that alexithymia will moderate the relationship between affective
 
 We pre-registered a hypothesis that included only affective category and alexithymia. We have additionally provided alternative models that allowed for depression and song liking to be entered as control variables. 
 
-First I will center the data. All continuous variables will be grand mean centered. 
+I will begin by loading in and joining hte data from each source
+
+```{r}
+psychopy <- here::here(
+  "data",
+  "psychopy_long.csv"
+) %>% 
+  read_csv() %>% 
+  mutate(
+    id = as.factor(str_remove(participant, "^0+")),
+    song = as.factor(songmark),
+    factor = fct_relevel(
+      affect_label, 
+      "Positive/Low",
+      "Positive/High",
+      "Negative/Low",
+      "Negative/High"
+    )
+  )
+
+glimpse(psychopy)
+
+survey <- here::here(
+  "data",
+  "survey_responses.csv"
+) %>% 
+  read_csv() %>% 
+  mutate(
+    id = as.factor(id),
+    tas_c = tas - mean(tas),
+    dep_c = depression - mean(depression)
+  )
+
+## Physiology data 
+
+
+data <- psychopy %>% 
+  left_join(survey, 
+            by = "id")
+
+```
+
+# Analysis of self-report 
+
+```{r}
+self_report_analyse <- data %>% 
+    select(
+    id,
+    song,
+    factor,
+    arousal_rating,
+    valence_rating,
+    liking_c,
+    tas_c,
+    dep_c
+  ) 
+
+glimpse(sample_n(self_report_analyse, 20))
+```
+
+## Hypothesised models 
+
+The hypothesised models included only the fixed effects of the affective category, alexithymia, and their interaction. 
+
+### Valence
+Here we can see that there is no statstically significant interaction with alexithymia
+
+```{r}
+hyp_valence <- afex::mixed(
+  valence_rating ~ factor * tas_c + (1 + factor | id) + (1|song),
+  data = self_report_analyse
+)
+
+afex::nice(hyp_valence)
+```
+
+We can also see that valence was rated higher for songs which had a nomially positive valence. Further we can see valence was equatable among nominaly negative songs and aong nomially positive songs
+
+```{r}
+pairs(emmeans::emmeans(hyp_valence, ~factor))
+```
+
+
+### Arousal 
+
+Here we can see that there is no statstically significant interaction with alexithymia
+
+```{r}
+hyp_arousal <- afex::mixed(
+  arousal_rating ~ factor * tas_c + (1 + factor | id) + (1|song),
+  data = self_report_analyse
+)
+
+afex::nice(hyp_arousal)
+```
+
+We can also see that arousal was rated higher for songs which were nomially high in arousal. However, we can also see that arousal was not equitable among positive songs that were both nimally low in arousal, with a similar trend emerging for that were nomially high in arousal
+
+```{r}
+pairs(emmeans::emmeans(hyp_arousal, ~factor))
+```
+
+
+### Follow up model with liking included 
+
+```{r}
+liking_valence <- afex::mixed(
+  valence_rating ~ factor * tas_c * liking_c + (1 + factor | id) + (1|song),
+  data = self_report_analyse
+)
+
+afex::nice(liking_valence)
+
+
+```
+
+#### Follow up tests
+```{r}
+
+
+
+
+```
 
 
 ```{r}
@@ -29,13 +152,7 @@ self_report_analyse <- here::here(
   "self_report_only.csv"
 ) %>% 
   read_csv() %>% 
-  mutate(factor = fct_relevel(
-    factor, 
-    "Positive/Low",
-    "Positive/High",
-    "Negative/Low",
-    "Negative/High"
-  )
+
 
 ```
 
