@@ -12,15 +12,16 @@ reaction_data <- here::here(
 ) %>% 
   read_csv() %>% 
   mutate(
-    participant = as.numeric(participant),
-    id_trial = paste0(participant, "_", trial_number)
-  )
+    pid = as.numeric(participant)
+  ) %>% 
+  select(-X1) 
 
 # Qualtrics Data ----------------------------------------------------------
 
 z_score <- function(x){
   (x-mean(x, na.rm = TRUE))/sd(x, na.rm = TRUE)
 }
+
 
 survey_data <- here::here(
   "data",
@@ -37,6 +38,9 @@ survey_data <- here::here(
       z_score,
       .names = "{col}_z"
       )
+  ) %>% 
+  rename(
+    pid = id
   )
 
 
@@ -47,27 +51,21 @@ physiology_data <- here::here(
   "physiology_data_processed.Rds"
 ) %>% 
   read_rds() %>% 
-  mutate(
-    id_trial = paste0(pid, "_", trial)
-  ) %>% 
   filter(
-    all_trials == TRUE)
+    all_trials == TRUE &
+    trial != 0)
 
 length(unique(physiology_data$pid))
 
 # Merge Data --------------------------------------------------------------
 
 merged <- reaction_data %>% 
-  left_join(survey_data,
-            by = c("participant" = "id")) %>% 
-  left_join(physiology_data,
-            by = "id_trial") %>% 
-  select(-pid) %>% 
-    rename(
-      "pid" = "participant"
-    )
+  full_join(physiology_data, by = c("pid", "trial")) %>% 
+  full_join(survey_data, by = "pid") %>% 
+  mutate(
+    factor = as.factor(affect_label)
+  )
 
-length(unique(merged$pid))
 
 # Export all data ---------------------------------------------------------
 
@@ -78,3 +76,4 @@ merged %>%
       "all_data.Rds"
     )
   )
+
