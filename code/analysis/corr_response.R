@@ -1,143 +1,133 @@
 
 #################################################################
-##                      Model Corrugator                       ##
+##                        Model corr                        ##
 #################################################################
 
+# Load packages -----------------------------------------------------------
 
-# Load Packages -----------------------------------------------------------
-
-library(tidyverse) # Easily Install and Load the 'Tidyverse'
-library(lmerTest) # Tests in Linear Mixed Effects Models
 library(emmeans) # Estimated Marginal Means, aka Least-Squares Means
-source("code/apa_f.R") # Get APA summary of fixed effects
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(lmerTest) # Linear Mixed-Effects Models using 'Eigen' and S4
+library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c)
+source("code/apa_f.r")
+
 # Import Data -------------------------------------------------------------
 
-corr_data <- here::here(
+corr_all <-here::here(
   "data",
   "all_data.Rds"
 ) %>%
   read_rds() %>%
   mutate(
     liking = liking - 3
-  ) %>%
-  filter(abs(corr_z) < 3) %>% # remove scores above/below 3SDs
-  drop_na(liking, tas_z)
+  ) 
 
-length(unique(corr_data$pid))
-
-log <- here::here(
+corr_log <- here::here(
   "data",
   "log.csv"
 ) %>%
   read_csv() %>%
   rename(
     pid = P
-  )
+  ) %>% 
+  filter(
+    grepl("bad", Corr)
+  ) %>%
+  select(pid)
 
-questionable <- here::here(
-  "data",
-  "improbable_emg.Rds"
-) %>% 
-  read_rds()
+corr <- corr_all %>% 
+  anti_join(corr_log) %>% 
+  filter(abs(corr_z) < 3) %>% 
+  drop_na(liking, tas_z)
 
-# Get bad recordings ------------------------------------------------------
 
-bad_corr <- log %>%
-  filter(!is.na(Corr)) %>%
-  select(pid) 
-
-nrow(bad_corr)
-
-remove_corr <- bad_corr %>% 
-  full_join(questionable)
-
-# Create corr data --------------------------------------------------------
-
-corr <- corr_data %>%
-  anti_join(remove_corr,
-            by = "pid"
-  )
-
-length(unique(corr_data$pid)) - length(unique(corr$pid)) # 53 cases removed
-
+length(unique(corr$pid))
 # Model Responses ---------------------------------------------------------
 
-# Model 1: Main Effect of Factor ------------------------------------------
+# Fit data to null model 
 
-
-corr_1 <- lmerTest::lmer(
-  corr_z ~ factor + (1 | pid) + (1|song),
+corr_null <- lmerTest::lmer(
+  corr_pct ~ 1 + (1 | pid),
   data = corr,
-  contrasts = list(
-    factor = contr.sum
-  ),
   REML = FALSE
-) # singulatrity warning but this is owing to person as the standarised scores are being used. The random slope and ranfom intercept of song allow a better fit acording to the AIC
-
-
-AIC(corr_1)
-# Model 2: Add liking -----------------------------------------------------
-corr_2 <- update(
-  corr_1,
-  . ~ . + liking
 )
 
-# Model 3 Add Interactions ------------------------------------------------
+corr_rand <- lmerTest::lmer(
+  corr_pct ~ 1 + (1 | pid) + (1 | song),
+  data = corr,
+  REML = FALSE
+)
+
+anova(corr_null, corr_rand) # null model is prefered
+
+# Random structure is best 
+# Model 1: Liking ------------------------------------------
+
+
+corr_1 <- update(
+  corr_null, 
+  . ~ . + liking
+)
+# Model 2: Add factor -----------------------------------------------------
+corr_2 <- update(
+  corr_1,
+  . ~ . + factor
+)
+
+# Model 4 Add interaction ------------------------------------------------
 
 corr_3 <- update(
   corr_2,
   . ~ . + liking:factor
 )
-# Model 4 add TAS ---------------------------------------------------------
+# Model 5 add TAS ---------------------------------------------------------
 
 corr_4 <- update(
   corr_3,
-  . ~ . + tas_z + tas_z:factor
+  . ~ . + tas_z
 )
 
 
-# Model 5 add depression --------------------------------------------------
+corr_5 <- update(
+  corr_4,
+  . ~ . + tas_z:factor + tas_z:liking
+)
+# Model 6 add depression --------------------------------------------------
 
 corr_5 <- update(
   corr_4,
-  . ~ . + depression_z + depression_z:factor
-) # model failed to converge
+  . ~ . + depression_z 
+)
+
+corr_6 <- update(
+  corr_5,
+  . ~ . + depression_z:factor + depression_z:liking
+)
 
 
+# LRT of model fit ------------------------------------------------------
 
-# ANOVA of models ---------------------------------------------------------
+anova(corr_1, corr_2, corr_3, corr_4, corr_5, corr_6)
 
-anova(corr_1, corr_2, corr_3, corr_4, corr_5)
-# Compare Model Fits ------------------------------------------------------
-
-sapply(
-  paste0(
-    "corr_",
-    c(1:5)
-  ),
-  function(x) {
-    AIC(get(x))
-  }
-) %>%
-  data.frame() %>%
-  rename(
-    AIC = "."
-  ) %>%
-  mutate(
-    AICdiff = AIC - AIC(corr_5)
-  ) # considewring parsimony model 1 is the best model
-
-# Get anova table ---------------------------------------------------------
+# ANOVA of Model 3 --------------------------------------------------------
 
 apa_f(corr_1)
 
 
+# Simple slopes analysis --------------------------------------------------
 
-# Plot effect -------------------------------------------------------------
+# Plot --------------------------------------------------------------------
 
-sjPlot::plot_model(
+corr_plot <- emmeans::emmip(
   corr_1,
-  type = "pred",
-  terms = "factor"
-)
+  ~ liking,
+  CIs = TRUE,
+  at = list(liking = c(-2, 0, 2))
+) +
+  scale_color_discrete(name = "") +
+  ylab("Predicted corr") +
+  xlab("Song liking") +
+  ggplot2::theme_classic() +
+  ggtitle("A")
+
 
