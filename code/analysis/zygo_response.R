@@ -1,145 +1,146 @@
 
 #################################################################
-##                      Model Zygomaticus                      ##
+##                        Model zygo                        ##
 #################################################################
 
-# Load Packages -----------------------------------------------------------
+# Load packages -----------------------------------------------------------
 
-library(tidyverse) # Easily Install and Load the 'Tidyverse'
-library(lmerTest) # Tests in Linear Mixed Effects Models
 library(emmeans) # Estimated Marginal Means, aka Least-Squares Means
-source("code/apa_f.R") # Get APA summary of fixed effects
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(lmerTest) # Linear Mixed-Effects Models using 'Eigen' and S4
+library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c)
+source("code/apa_f.r")
+
 # Import Data -------------------------------------------------------------
 
-zygo_data <- here::here(
+zygo_all <-here::here(
   "data",
   "all_data.Rds"
 ) %>%
   read_rds() %>%
   mutate(
     liking = liking - 3
-  ) %>%
-  filter(abs(zygo_z) < 3) %>% # remove scores above/below 3SDs
-  drop_na(liking, tas_z)
+  ) 
 
-length(unique(zygo_data$pid))
-
-log <- here::here(
+zygo_log <- here::here(
   "data",
   "log.csv"
 ) %>%
   read_csv() %>%
   rename(
     pid = P
-  )
+  ) %>% 
+  filter(
+    grepl("bad", Zygo)
+  ) %>%
+  select(pid)
 
-questionable <- here::here(
-  "data",
-  "improbable_emg.Rds"
-) %>% 
-  read_rds()
+zygo <- zygo_all %>% 
+  anti_join(zygo_log) %>% 
+  filter(abs(zygo_z) < 3) %>% 
+  drop_na(liking, tas_z)
 
-# Get bad recordings ------------------------------------------------------
 
-bad_zygo <- log %>%
-  filter(!is.na(Zygo)) %>%
-  select(pid) 
-
-nrow(bad_zygo)
-
-remove_zygo <- bad_zygo %>% 
-  full_join(questionable)
-
-# Create zygo data --------------------------------------------------------
-
-zygo <- zygo_data %>%
-  anti_join(remove_zygo,
-            by = "pid"
-  )
-
-length(unique(zygo_data$pid)) - length(unique(zygo$pid)) # 53 cases removed
-
+length(unique(zygo$pid))
 # Model Responses ---------------------------------------------------------
 
-# Model 1: Main Effect of Factor ------------------------------------------
+# Fit data to null model 
 
-
-zygo_1 <- lmerTest::lmer(
-  zygo_z ~ factor + (1 | pid),
+zygo_null <- lmerTest::lmer(
+  zygo_pct ~ 1 + (1 | pid),
   data = zygo,
-  contrasts = list(
-    factor = contr.sum
-  ),
   REML = FALSE
-) # singulatrity warning but this is owing to person as the standarised scores are being used. The random slope and ranfom intercept of song allow a better fit acording to the AIC
-
-
-AIC(zygo_1)
-# Model 2: Add liking -----------------------------------------------------
-zygo_2 <- update(
-  zygo_1,
-  . ~ . + liking
 )
 
-# Model 3 Add Interactions ------------------------------------------------
+zygo_rand <- lmerTest::lmer(
+  zygo_pct ~ 1 + (1 | pid) + (1 | song),
+  data = zygo,
+  REML = FALSE
+)
+
+anova(zygo_null, zygo_rand)
+
+# Random structure is best 
+# Model 1: Liking ------------------------------------------
+
+
+zygo_1 <- update(
+  zygo_null, 
+  . ~ . + liking
+)
+# Model 2: Add factor -----------------------------------------------------
+zygo_2 <- update(
+  zygo_1,
+  . ~ . + factor
+)
+
+# Model 4 Add interaction ------------------------------------------------
 
 zygo_3 <- update(
   zygo_2,
   . ~ . + liking:factor
 )
-# Model 4 add TAS ---------------------------------------------------------
+# Model 5 add TAS ---------------------------------------------------------
 
 zygo_4 <- update(
   zygo_3,
-  . ~ . + tas_z + tas_z:factor
+  . ~ . + tas_z
 )
 
-
-# Model 5 add depression --------------------------------------------------
 
 zygo_5 <- update(
   zygo_4,
-  . ~ . + depression_z + depression_z:factor
-) # model failed to converge
+  . ~ . + tas_z:factor + tas_z:liking
+)
+# Model 6 add depression --------------------------------------------------
 
+zygo_5 <- update(
+  zygo_4,
+  . ~ . + depression_z 
+)
 
-
-# ANOVA of models ---------------------------------------------------------
-
-anova(zygo_1, zygo_2, zygo_3, zygo_4, zygo_5)
-# Compare Model Fits ------------------------------------------------------
-
-sapply(
-  paste0(
-    "zygo_",
-    c(1:5)
-  ),
-  function(x) {
-    AIC(get(x))
-  }
-) %>%
-  data.frame() %>%
-  rename(
-    AIC = "."
-  ) %>%
-  mutate(
-    AICdiff = AIC - AIC(zygo_5)
-  ) # considewring parsimony model 1 is the best model
-
-# Get anova table ---------------------------------------------------------
-
-apa_f(zygo_1)
-
-
-
-# Plot effect -------------------------------------------------------------
-
-sjPlot::plot_model(
-  zygo_1,
-  type = "pred",
-  terms = "factor"
+zygo_6 <- update(
+  zygo_5,
+  . ~ . + depression_z:factor + depression_z:liking
 )
 
 
+# LRT of model fit ------------------------------------------------------
+
+anova(zygo_1, zygo_2, zygo_3, zygo_4, zygo_5, zygo_6)
+
+# ANOVA of Model 3 --------------------------------------------------------
+
+apa_f(zygo_3)
+
+# Marginal Means Analysis -------------------------------------------------
+
+emmeans::emmeans(
+  zygo_3,
+  pairwise ~ factor,
+  infer = TRUE)
+# Simple slopes analysis --------------------------------------------------
+
+emmeans::emtrends(
+  zygo_3,
+  pairwise ~ factor,
+  var = "liking",
+  infer = TRUE
+)
+
+
+# Plot --------------------------------------------------------------------
+
+zygo_plot <- emmeans::emmip(
+  zygo_3,
+  factor ~ liking,
+  CIs = TRUE,
+  at = list(liking = c(-2, 0, 2))
+) +
+  scale_color_discrete(name = "") +
+  ylab("Predicted Zygo") +
+  xlab("Song liking") +
+  ggplot2::theme_classic() +
+  ggtitle("A")
 
 
